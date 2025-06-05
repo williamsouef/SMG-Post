@@ -7,11 +7,17 @@
 
 import Foundation
 
+protocol URLSessionProtocol {
+    func data(for request: URLRequest) async throws -> (Data, URLResponse)
+}
+
+extension URLSession: URLSessionProtocol {}
+
 final class PostService {
     private let baseURL = "https://jsonplaceholder.typicode.com"
-    private let session: URLSession
+    private let session: URLSessionProtocol
 
-    init(session: URLSession = .shared) { self.session = session }
+    init(session: URLSessionProtocol = URLSession.shared) { self.session = session }
 
     func fetchPosts() async throws -> [Post] {
         try await request(endpoint: "/posts")
@@ -45,6 +51,7 @@ final class PostService {
         method: String = "GET",
         body: B
     ) async throws -> T {
+        
         guard let url = URL(string: baseURL + endpoint) else { throw APIError.unknown }
         var req = URLRequest(url: url)
         req.httpMethod = method
@@ -52,8 +59,14 @@ final class PostService {
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let (data, resp) = try await session.data(for: req)
-        guard (resp as? HTTPURLResponse)?.statusCode == 200 else { throw APIError.wrongStatusCode }
-        do { return try JSONDecoder().decode(T.self, from: data) }
-        catch { throw APIError.decoding }
+        guard (resp as? HTTPURLResponse)?.statusCode == 200 else {
+            throw APIError.wrongStatusCode
+        }
+        do {
+            return try JSONDecoder().decode(T.self, from: data)
+        }
+        catch {
+            throw APIError.decoding
+        }
     }
 }
