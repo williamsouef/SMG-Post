@@ -30,7 +30,7 @@ struct PostDetailView: View {
                     .font(.title2).bold()
                 Text(store.post.body)
                 Divider()
-                Text("Commentaires").font(.headline)
+                Text("Comments").font(.headline)
                 ForEach(store.comments) { c in
                     VStack(alignment: .leading) {
                         Text(c.name).bold()
@@ -41,7 +41,18 @@ struct PostDetailView: View {
             }
             .padding()
         }
-        .navigationTitle("Détails")
+        .navigationTitle("Details")
         .task { await store.load() }
+    }
+}
+
+#Preview {
+    NavigationStack {
+        PostDetailView(post: Post(
+            id: 1,
+            userId: 1,
+            title: "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+            body: "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+        ))
     }
 }

@@ -34,3 +34,7 @@ struct PostListView: View {
         .task { await store.load() }
     }
 }
+
+#Preview {
+    PostListView()
+}

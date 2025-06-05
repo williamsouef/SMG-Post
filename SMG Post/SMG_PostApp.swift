@@ -11,7 +11,7 @@ import SwiftUI
 struct SMG_PostApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            PostListView()
         }
     }
 }
